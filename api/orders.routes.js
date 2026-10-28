@@ -37,7 +37,7 @@ function ordersRouter(ordersService) {
         return res.status(500).json({ error: "InternalError", code: "INTERNAL_ERROR", details: null, requestId });
     }
 
-    router.post("/orders", (req, res) => {
+    router.post("/orders", async (req, res) => {
         const key = req.get("Idempotency-Key");
         if (!key) {
             return res.status(400).json({
@@ -64,7 +64,7 @@ function ordersRouter(ordersService) {
             return res.status(cached.status).json(cached.body);
         }
         try {
-            const order = ordersService.create(req.body || {});
+            const order = await ordersService.create(req.body || {});
             const body = { ...toResponse(order), requestId: req.requestId };
             idempotencyStore.set(key, { fingerprint, status: 201, body });
             res.status(201).json(body);
@@ -73,36 +73,36 @@ function ordersRouter(ordersService) {
         }
     });
 
-    router.get("/orders", (req, res) => {
+    router.get("/orders", async (req, res) => {
         try {
-            const orders = ordersService.list();
+            const orders = await ordersService.list();
             res.status(200).json(orders.map(toResponse));
         } catch (err) {
             handleError(err, req, res);
         }
     });
 
-    router.get("/orders/:id", (req, res) => {
+    router.get("/orders/:id", async (req, res) => {
         try {
-            const order = ordersService.getById(req.params.id);
+            const order = await ordersService.getById(req.params.id);
             res.status(200).json(toResponse(order));
         } catch (err) {
             handleError(err, req, res);
         }
     });
 
-    router.put("/orders/:id", (req, res) => {
+    router.put("/orders/:id", async (req, res) => {
         try {
-            const order = ordersService.update(req.params.id, req.body || {});
+            const order = await ordersService.update(req.params.id, req.body || {});
             res.status(200).json(toResponse(order));
         } catch (err) {
             handleError(err, req, res);
         }
     });
 
-    router.delete("/orders/:id", (req, res) => {
+    router.delete("/orders/:id", async (req, res) => {
         try {
-            ordersService.remove(req.params.id);
+            await ordersService.remove(req.params.id);
             // Видалений order більше не має блокувати повторне створення з тим самим ключем.
             for (const [key, cached] of idempotencyStore.entries()) {
                 if (cached.body.id === req.params.id) idempotencyStore.delete(key);

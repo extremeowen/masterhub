@@ -17,23 +17,36 @@ app.use(rateLimit({
 }));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Репозиторій: SQLite для реального запуску.
-// Якщо better-sqlite3 недоступний (наприклад, немає native build),
-// можна тимчасово підставити InMemoryOrdersRepository.
+// Docker uses PostgreSQL; local runs keep the existing SQLite/in-memory fallback.
 let ordersRepository;
-try {
-    const SqliteOrdersRepository = require("./repository/SqliteOrdersRepository");
-    ordersRepository = new SqliteOrdersRepository("masterhub.db");
-} catch (e) {
-    console.warn("SQLite repository unavailable, falling back to in-memory:", e.message);
-    const InMemoryOrdersRepository = require("./repository/InMemoryOrdersRepository");
-    ordersRepository = new InMemoryOrdersRepository();
+if (process.env.DATABASE_URL) {
+    const PostgresOrdersRepository = require("./repository/PostgresOrdersRepository");
+    ordersRepository = new PostgresOrdersRepository(process.env.DATABASE_URL);
+} else {
+    try {
+        const SqliteOrdersRepository = require("./repository/SqliteOrdersRepository");
+        ordersRepository = new SqliteOrdersRepository("masterhub.db");
+    } catch (e) {
+        console.warn("SQLite repository unavailable, falling back to in-memory:", e.message);
+        const InMemoryOrdersRepository = require("./repository/InMemoryOrdersRepository");
+        ordersRepository = new InMemoryOrdersRepository();
+    }
 }
 
 const ordersService = new OrdersService(ordersRepository);
 
-app.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok" });
+app.get("/health", async (req, res) => {
+    try {
+        if (ordersRepository.ready) await ordersRepository.ready;
+        res.status(200).json({ status: "ok" });
+    } catch (err) {
+        res.status(503).json({
+            error: "DependencyUnavailableError",
+            code: "DEPENDENCY_UNAVAILABLE",
+            details: { cause: err.message },
+            requestId: req.requestId,
+        });
+    }
 });
 
 app.use(ordersRouter(ordersService));

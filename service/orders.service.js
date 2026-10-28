@@ -7,6 +7,23 @@ class OrdersService {
         this.repo = ordersRepository;
     }
 
+    isAsync(value) {
+        return value && typeof value.then === "function";
+    }
+
+    saveCreatedOrder(order) {
+        try {
+            const result = this.repo.save(order);
+            return this.isAsync(result)
+                ? result.catch((err) => {
+                    throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+                })
+                : result;
+        } catch (err) {
+            throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+        }
+    }
+
     create(data) {
         const details = [];
         if (!data.clientId) details.push({ field: "clientId", message: "clientId is required" });
@@ -25,21 +42,26 @@ class OrdersService {
             // Збій сховища стає явною помилкою degraded mode замість загальної відповіді 500.
             throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
         }
-        const order = new Order(id, data.clientId, data.masterId, data.serviceId, data.scheduledAt);
-        const now = new Date().toISOString();
-        order.createdAt = now;
-        order.updatedAt = now;
-
-        try {
-            return this.repo.save(order);
-        } catch (err) {
+        const buildAndSave = (resolvedId) => {
+            const order = new Order(resolvedId, data.clientId, data.masterId, data.serviceId, data.scheduledAt);
+            const now = new Date().toISOString();
+            order.createdAt = now;
+            order.updatedAt = now;
+            return this.saveCreatedOrder(order);
+        };
+        return this.isAsync(id) ? id.then(buildAndSave).catch((err) => {
             throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
-        }
+        }) : buildAndSave(id);
     }
 
     list() {
         try {
-            return this.repo.findAll();
+            const result = this.repo.findAll();
+            return this.isAsync(result)
+                ? result.then((orders) => orders).catch((err) => {
+                    throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+                })
+                : result;
         } catch (err) {
             throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
         }
@@ -52,8 +74,14 @@ class OrdersService {
         } catch (err) {
             throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
         }
-        if (!order) throw new NotFoundError("ORDER_NOT_FOUND");
-        return order;
+        const resolve = (found) => {
+            if (!found) throw new NotFoundError("ORDER_NOT_FOUND");
+            return found;
+        };
+        return this.isAsync(order) ? order.then(resolve).catch((err) => {
+            if (err instanceof NotFoundError) throw err;
+            throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+        }) : resolve(order);
     }
 
     update(id, data) {
@@ -63,37 +91,34 @@ class OrdersService {
         } catch (err) {
             throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
         }
-        if (!order) throw new NotFoundError("ORDER_NOT_FOUND");
-
-        if (data.scheduledAt) {
-            order.scheduledAt = data.scheduledAt;
-        }
-
-        if (data.status) {
-            try {
-                if (data.status === "confirmed") order.confirm();
-                else if (data.status === "done") order.complete();
-                else if (data.status === "cancelled") order.cancel();
-                else {
-                    throw new ValidationError("INVALID_STATUS", [
+        const applyUpdate = (found) => {
+            if (!found) throw new NotFoundError("ORDER_NOT_FOUND");
+            if (data.scheduledAt) found.scheduledAt = data.scheduledAt;
+            if (data.status) {
+                try {
+                    if (data.status === "confirmed") found.confirm();
+                    else if (data.status === "done") found.complete();
+                    else if (data.status === "cancelled") found.cancel();
+                    else throw new ValidationError("INVALID_STATUS", [
                         { field: "status", message: `Unknown status: ${data.status}` },
                     ]);
+                } catch (err) {
+                    if (err instanceof ValidationError) throw err;
+                    throw new ValidationError("INVALID_TRANSITION", [
+                        { field: "status", message: err.message },
+                    ]);
                 }
-            } catch (err) {
-                if (err instanceof ValidationError) throw err;
-                // помилки з доменного класу (напр. неможливий перехід статусу)
-                throw new ValidationError("INVALID_TRANSITION", [
-                    { field: "status", message: err.message },
-                ]);
             }
+            found.updatedAt = new Date().toISOString();
+            return this.saveCreatedOrder(found);
+        };
+        if (this.isAsync(order)) {
+            return order.then(applyUpdate).catch((err) => {
+                if (err instanceof ValidationError || err instanceof NotFoundError) throw err;
+                throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+            });
         }
-
-        order.updatedAt = new Date().toISOString();
-        try {
-            return this.repo.save(order);
-        } catch (err) {
-            throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
-        }
+        return applyUpdate(order);
     }
 
     remove(id) {
@@ -103,12 +128,26 @@ class OrdersService {
         } catch (err) {
             throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
         }
-        if (!order) throw new NotFoundError("ORDER_NOT_FOUND");
-        try {
-            this.repo.delete(id);
-        } catch (err) {
-            throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+        const removeFound = (found) => {
+            if (!found) throw new NotFoundError("ORDER_NOT_FOUND");
+            try {
+                const result = this.repo.delete(id);
+                return this.isAsync(result)
+                    ? result.catch((err) => {
+                        throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+                    })
+                    : result;
+            } catch (err) {
+                throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+            }
+        };
+        if (this.isAsync(order)) {
+            return order.then(removeFound).catch((err) => {
+                if (err instanceof NotFoundError || err instanceof DependencyUnavailableError) throw err;
+                throw new DependencyUnavailableError("Orders storage is unavailable", { cause: err.message });
+            });
         }
+        return removeFound(order);
     }
 }
 

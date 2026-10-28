@@ -12,12 +12,12 @@
     "start": "node server.js",
     "init-db": "node init-db.js"
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "better-sqlite3": "^12.11.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.23.1"
   }
 }
