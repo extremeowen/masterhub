@@ -149,11 +149,12 @@ docker compose down
 - **Чи працює persistence?** Так, дані зберігаються у named volume `postgres-data`.
 - **Що буде без PostgreSQL?** API повертає зрозумілий `503` degraded mode; локально без `DATABASE_URL` зберігається SQLite/in-memory fallback.
 - **Де повний сценарій захисту?** У `docs/practical6-defense.md`.
+
 ## Практична 7 — CI/CD для API
 
-Workflow `.github/workflows/ci.yml` запускається для `push` і `pull_request` у `main`, а також вручну через `workflow_dispatch`. Він установлює Node.js 22 з кешем npm, виконує `npm ci` та `npm test`, збирає Docker-образ API з кореневого `Dockerfile`, зберігає його як `masterhub-api.tar` і завантажує у виконання GitHub Actions на 7 днів. Образ тегується SHA коміту; публікація до GHCR не потрібна.
+Workflow `.github/workflows/ci.yml` запускається на `push` і `pull_request` у `main`, а також вручну. Він установлює Node.js 22 з кешем npm, запускає `npm ci` і `npm test`, після чого збирає Docker-образ API. Для `push` у `main` окремий job публікує образ у GHCR із тегами `latest` і `sha-<commit>`. У pull request образ лише збирається, без публікації.
 
-### Локально перевірити кроки workflow
+### Локально перевірити кроки CI
 
 ```bash
 npm ci
@@ -161,3 +162,14 @@ npm test
 docker build -t masterhub-api:local .
 docker run --rm -p 8080:8080 masterhub-api:local
 ```
+
+Перевірити API: `curl.exe -i http://localhost:8080/health`.
+
+### Завантажити образ із GHCR
+
+```bash
+docker pull ghcr.io/extremeowen/masterhub-api:latest
+docker run --rm -p 8080:8080 ghcr.io/extremeowen/masterhub-api:latest
+```
+
+Посилання: [запуски CI/CD](https://github.com/extremeowen/masterhub/actions/workflows/ci.yml), образ `ghcr.io/extremeowen/masterhub-api`. Якщо пакет приватний, перед завантаженням потрібно увійти до GHCR з токеном, що має `read:packages`.
