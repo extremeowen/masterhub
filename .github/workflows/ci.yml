@@ -1,0 +1,51 @@
+name: CI and API artifact
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build-api:
+    name: Test and package API
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build API image
+        run: docker build --tag masterhub-api:${{ github.sha }} .
+
+      - name: Save API image
+        run: docker save masterhub-api:${{ github.sha }} --output masterhub-api.tar
+
+      - name: Upload API image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: masterhub-api-${{ github.sha }}
+          path: masterhub-api.tar
+          if-no-files-found: error
+          retention-days: 7

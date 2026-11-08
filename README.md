@@ -1,3 +1,5 @@
+[![CI](https://github.com/SilverSmall/masterhub/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SilverSmall/masterhub/actions/workflows/ci.yml)
+
 # Практична 5 — MasterHub: надійний CRUD API
 
 ## Що зроблено
@@ -147,3 +149,17 @@ docker compose down
 - **Чи працює persistence?** Так, дані зберігаються у named volume `postgres-data`.
 - **Що буде без PostgreSQL?** API повертає зрозумілий `503` degraded mode; локально без `DATABASE_URL` зберігається SQLite/in-memory fallback.
 - **Де повний сценарій захисту?** У `docs/practical6-defense.md`.
+## Практична 7 — CI/CD для API
+
+Workflow `.github/workflows/ci.yml` запускається для `push` і `pull_request` у `main`, а також вручну через `workflow_dispatch`. Він установлює Node.js 22 з кешем npm, виконує `npm ci` та `npm test`, збирає Docker-образ API з кореневого `Dockerfile`, зберігає його як `masterhub-api.tar` і завантажує у виконання GitHub Actions на 7 днів. Образ тегується SHA коміту; публікація до GHCR не потрібна.
+
+### Локально перевірити кроки workflow
+
+```bash
+npm ci
+npm test
+docker build -t masterhub-api:local .
+docker run --rm -p 8080:8080 masterhub-api:local
+```
+
+Після запуску перевір API на `http://localhost:8080/health`. Детальний порядок демонстрації та роботи з артефактом наведено в [`docs/practical7-defense.md`](docs/practical7-defense.md).
