@@ -1,4 +1,4 @@
-[![CI](https://github.com/SilverSmall/masterhub/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/SilverSmall/masterhub/actions/workflows/ci.yml)
+[![CI](https://github.com/extremeowen/masterhub/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/extremeowen/masterhub/actions/workflows/ci.yml)
 
 # Практична 5 — MasterHub: надійний CRUD API
 
@@ -161,5 +161,3 @@ npm test
 docker build -t masterhub-api:local .
 docker run --rm -p 8080:8080 masterhub-api:local
 ```
-
-Після запуску перевір API на `http://localhost:8080/health`. Детальний порядок демонстрації та роботи з артефактом наведено в [`docs/practical7-defense.md`](docs/practical7-defense.md).
