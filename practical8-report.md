@@ -30,16 +30,16 @@
 
 ### Базова частина: RED-дашборд
 
-![Базовий RED-дашборд](observability-demo/lab8 60 grafana.png)
+![Базовий RED-дашборд](docs/lab8-red-baseline.png)
 
 ### Базова частина: trace у Tempo
 
-![Деталі trace у Tempo](observability-demo/trace.png)
+![Деталі trace у Tempo](docs/lab8-tempo-trace.png)
 
 ### Базова частина: логи у Loki
 
-![Логи demo-app у Loki](observability-demo/loki.png)
+![Логи demo-app у Loki](docs/lab8-loki-logs.png)
 
 ### Власний дашборд My Demo RED
 
-![Власний RED-дашборд](docs/Lab8 75 prometeus.png)
+![Власний RED-дашборд](docs/Lab8%2075%20prometeus.png)
