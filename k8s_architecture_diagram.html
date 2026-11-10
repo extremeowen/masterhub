@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Практична 9: Схема Kubernetes для MasterHub API</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .arrow-line {
+      stroke: var(--muted-foreground, #64748b);
+      stroke-width: 2;
+      marker-end: url(#arrowhead);
+    }
+    .arrow-line-blue {
+      stroke: #3b82f6;
+      stroke-width: 2.5;
+      marker-end: url(#arrowhead-blue);
+    }
+    .arrow-line-green {
+      stroke: #10b981;
+      stroke-width: 2;
+      marker-end: url(#arrowhead-green);
+    }
+    .arrow-line-orange {
+      stroke: #f97316;
+      stroke-width: 2;
+      stroke-dasharray: 6 3;
+      marker-end: url(#arrowhead-orange);
+    }
+    .node-box {
+      transition: all 0.2s ease-in-out;
+      cursor: default;
+    }
+    .node-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 antialiased p-6 min-h-screen">
+
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto mb-8 text-center">
+    <div class="inline-block px-3 py-1 bg-indigo-500/20 text-indigo-300 rounded-full text-xs font-semibold mb-2">
+      Курсовий проєкт MasterHub • Практична робота 9
+    </div>
+    <h1 class="text-3xl font-extrabold text-white tracking-tight">
+      Теоретична схема Kubernetes-додатку
+    </h1>
+    <p class="text-slate-400 text-sm mt-2 max-w-2xl mx-auto">
+      Архітектура розгортання бекенд-сервісу <span class="text-emerald-400 font-mono">masterhub-api</span> в кластері Kubernetes, маршрутизація від клієнта та зв'язок із CI/CD у GHCR.
+    </p>
+  </div>
+
+  <!-- Legend -->
+  <div class="max-w-6xl mx-auto flex flex-wrap gap-4 justify-center mb-8 bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+    <div class="flex items-center gap-2 text-xs">
+      <div class="w-3.5 h-3.5 rounded bg-blue-500/30 border border-blue-400"></div>
+      <span class="text-slate-300 font-medium">Зовнішній трафік (User → Ingress)</span>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <div class="w-3.5 h-3.5 rounded bg-emerald-500/30 border border-emerald-400"></div>
+      <span class="text-slate-300 font-medium">Внутрішні компоненти K8s (Service, Pods, DB)</span>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <div class="w-3.5 h-3.5 rounded bg-amber-500/30 border border-amber-400"></div>
+      <span class="text-slate-300 font-medium">Конфігурація (ConfigMap & Secret)</span>
+    </div>
+    <div class="flex items-center gap-2 text-xs">
+      <div class="w-3.5 h-3.5 rounded bg-orange-500/30 border border-orange-400 border-dashed"></div>
+      <span class="text-slate-300 font-medium">CI/CD Pipeline (GitHub Actions → GHCR)</span>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+    <!-- Column 1-3: Kubernetes & Traffic Architecture -->
+    <div class="lg:col-span-3 space-y-6">
+
+      <!-- External Traffic Stage -->
+      <div class="bg-slate-800/70 border border-blue-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 right-0 px-3 py-1 bg-blue-500/20 text-blue-300 text-[11px] font-mono rounded-bl-lg">
+          EXTERNAL NETWORK
+        </div>
+        <h2 class="text-sm font-bold text-blue-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <span>🌐</span> Зовнішній шар (Клієнт → Кластер)
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div class="node-box bg-slate-900/80 border border-slate-700 rounded-xl p-4">
+            <div class="text-2xl mb-1">👤</div>
+            <div class="font-bold text-white text-sm">Користувач / Клієнт</div>
+            <div class="text-slate-400 text-xs mt-1">Web-клієнт / Мобільний додаток</div>
+            <div class="text-[11px] text-blue-400 font-mono mt-2 bg-blue-950/40 py-1 rounded">
+              GET /orders • POST /orders
+            </div>
+          </div>
+
+          <div class="node-box bg-slate-900/80 border border-slate-700 rounded-xl p-4">
+            <div class="text-2xl mb-1">🌍</div>
+            <div class="font-bold text-white text-sm">DNS Provider</div>
+            <div class="text-slate-400 text-xs mt-1">Резолвінг домену в IP</div>
+            <div class="text-[11px] text-emerald-400 font-mono mt-2 bg-emerald-950/40 py-1 rounded">
+              api.masterhub.ua → LB_IP
+            </div>
+          </div>
+
+          <div class="node-box bg-slate-900/80 border border-slate-700 rounded-xl p-4">
+            <div class="text-2xl mb-1">⚖️</div>
+            <div class="font-bold text-white text-sm">Cloud Load Balancer</div>
+            <div class="text-slate-400 text-xs mt-1">TLS termination & захист від DDoS</div>
+            <div class="text-[11px] text-slate-300 font-mono mt-2 bg-slate-800 py-1 rounded">
+              Порти: 80, 443
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center mt-3 text-slate-400 text-xs">
+          ⬇ Запит через публічний балансувальник потрапляє на контролер Ingress
+        </div>
+      </div>
+
+      <!-- Kubernetes Cluster Box -->
+      <div class="bg-slate-800/90 border-2 border-emerald-500/40 rounded-2xl p-6 shadow-2xl relative">
+        <div class="flex items-center justify-between mb-5 border-b border-slate-700/80 pb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">☸️</span>
+            <span class="text-lg font-bold text-white">Kubernetes Cluster</span>
+          </div>
+          <span class="px-2.5 py-1 bg-emerald-500/20 text-emerald-300 text-xs font-mono rounded">
+            Namespace: masterhub-prod
+          </span>
+        </div>
+
+        <!-- Ingress Controller -->
+        <div class="mb-6">
+          <div class="node-box bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-4 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <span class="text-lg">🚪</span>
+              <span class="font-bold text-emerald-300 text-sm">Ingress Controller (nginx-ingress)</span>
+            </div>
+            <p class="text-slate-300 text-xs mt-1">
+              Маршрутизація за правилами: <code class="text-emerald-400">Host: api.masterhub.ua</code> та <code class="text-emerald-400">Path: /orders, /health</code>
+            </p>
+            <div class="text-[11px] text-slate-400 mt-1">
+              Направляє запити на внутрішній сервіс: <code class="text-slate-200">masterhub-api-svc:80</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- ConfigMap & Secret -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="node-box bg-amber-950/30 border border-amber-500/30 rounded-xl p-3">
+            <div class="flex items-center gap-2 text-amber-300 text-xs font-bold mb-1">
+              <span>📋</span> ConfigMap: masterhub-config
+            </div>
+            <div class="text-[11px] font-mono text-slate-300 space-y-0.5">
+              <div>PORT: "8080"</div>
+              <div>NODE_ENV: "production"</div>
+              <div>RATE_LIMIT: "60"</div>
+            </div>
+          </div>
+
+          <div class="node-box bg-amber-950/30 border border-amber-500/30 rounded-xl p-3">
+            <div class="flex items-center gap-2 text-amber-300 text-xs font-bold mb-1">
+              <span>🔐</span> Secret: masterhub-secret
+            </div>
+            <div class="text-[11px] font-mono text-slate-300 space-y-0.5">
+              <div>DATABASE_URL: postgresql://masterhub:***@...</div>
+              <div>POSTGRES_PASSWORD: ***</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Service Layer -->
+        <div class="mb-6">
+          <div class="node-box bg-slate-900 border border-emerald-500/50 rounded-xl p-4 text-center">
+            <div class="flex items-center justify-center gap-2">
+              <span class="text-lg">🔀</span>
+              <span class="font-bold text-white text-sm">Service: masterhub-api-svc</span>
+              <span class="text-xs px-2 py-0.5 bg-slate-800 text-slate-300 rounded font-mono">ClusterIP</span>
+            </div>
+            <div class="text-slate-400 text-xs mt-1">
+              Port: 80 &rarr; TargetPort: 8080 (kube-proxy / Endpoints балансування round-robin)
+            </div>
+          </div>
+        </div>
+
+        <!-- Deployment & Pods -->
+        <div class="bg-slate-900/90 border border-dashed border-emerald-500/40 rounded-xl p-4 mb-6">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wide">
+              📦 Deployment: masterhub-api (Replicas: 2)
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono">RollingUpdate Strategy</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Pod 1 -->
+            <div class="node-box bg-slate-800 border border-emerald-500/40 rounded-lg p-3">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-emerald-300 text-xs flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Pod 1: masterhub-api-79bf9-a1b2
+                </span>
+                <span class="text-[10px] bg-emerald-950 text-emerald-400 px-1.5 py-0.5 rounded font-mono">READY 1/1</span>
+              </div>
+              <div class="text-[11px] text-slate-300 font-mono space-y-0.5">
+                <div>Image: <span class="text-slate-100">ghcr.io/extremeowen/masterhub-api:1.0.0</span></div>
+                <div>Port: 8080 (Express Server)</div>
+                <div>Liveness: GET /health (5s)</div>
+              </div>
+            </div>
+
+            <!-- Pod 2 -->
+            <div class="node-box bg-slate-800 border border-emerald-500/40 rounded-lg p-3">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="font-bold text-emerald-300 text-xs flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Pod 2: masterhub-api-79bf9-c3d4
+                </span>
+                <span class="text-[10px] bg-emerald-950 text-emerald-400 px-1.5 py-0.5 rounded font-mono">READY 1/1</span>
+              </div>
+              <div class="text-[11px] text-slate-300 font-mono space-y-0.5">
+                <div>Image: <span class="text-slate-100">ghcr.io/extremeowen/masterhub-api:1.0.0</span></div>
+                <div>Port: 8080 (Express Server)</div>
+                <div>Liveness: GET /health (5s)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Database Layer (StatefulSet) -->
+        <div class="border-t border-slate-700/80 pt-4">
+          <div class="flex flex-col md:flex-row items-center gap-4 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700">
+            <div class="node-box flex-1 bg-slate-800 p-3 rounded-lg border border-slate-700 text-center">
+              <div class="text-xs font-bold text-indigo-300">🔀 Service: masterhub-db-svc</div>
+              <div class="text-[11px] text-slate-400 font-mono mt-0.5">ClusterIP • Port: 5432</div>
+            </div>
+            
+            <div class="text-slate-500 text-sm">➡️</div>
+
+            <div class="node-box flex-1 bg-slate-800 p-3 rounded-lg border border-slate-700 text-center">
+              <div class="text-xs font-bold text-white flex items-center justify-center gap-1">
+                <span>🐘</span> StatefulSet: masterhub-db
+              </div>
+              <div class="text-[11px] text-slate-300 font-mono mt-0.5">postgres:16-alpine (Replicas: 1)</div>
+              <div class="text-[10px] text-emerald-400 font-mono mt-0.5">PVC: postgres-data (10Gi)</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Column 4: CI/CD Pipeline & Delivery -->
+    <div class="space-y-6">
+      
+      <div class="bg-slate-800/80 border border-orange-500/30 rounded-2xl p-5 shadow-lg h-full flex flex-col">
+        <div class="flex items-center gap-2 mb-4 border-b border-slate-700 pb-2">
+          <span class="text-lg">🔄</span>
+          <h2 class="text-sm font-bold text-orange-400 uppercase tracking-wider">
+            CI/CD Pipeline
+          </h2>
+        </div>
+
+        <div class="space-y-4 flex-1">
+          <!-- Step 1: Git -->
+          <div class="node-box bg-slate-900/90 border border-slate-700 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-white flex items-center gap-1.5">
+              <span>📂</span> Git Repository
+            </div>
+            <div class="text-[11px] font-mono text-orange-300 mt-1">
+              github.com/extremeowen/masterhub
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">
+              Розробник робить <code class="text-slate-200">git push main</code>
+            </div>
+          </div>
+
+          <div class="text-center text-slate-500 text-xs">⬇ Тригер workflow</div>
+
+          <!-- Step 2: GitHub Actions -->
+          <div class="node-box bg-slate-900/90 border border-slate-700 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-white flex items-center gap-1.5">
+              <span>⚙️</span> GitHub Actions
+            </div>
+            <div class="text-[11px] text-slate-300 font-mono mt-1">
+              .github/workflows/ci.yml
+            </div>
+            <ul class="text-[10px] text-slate-400 mt-1.5 space-y-1 list-disc list-inside">
+              <li>1. Checkout & npm ci</li>
+              <li>2. Автотести: npm test</li>
+              <li>3. docker build -t masterhub-api</li>
+              <li>4. Пуш з GITHUB_TOKEN</li>
+            </ul>
+          </div>
+
+          <div class="text-center text-slate-500 text-xs">⬇ Пуш образу</div>
+
+          <!-- Step 3: GHCR -->
+          <div class="node-box bg-slate-900/90 border border-slate-700 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-white flex items-center gap-1.5">
+              <span>📦</span> Container Registry
+            </div>
+            <div class="text-[11px] font-mono text-emerald-400 mt-1 break-all">
+              ghcr.io/extremeowen/masterhub-api:1.0.0
+            </div>
+            <div class="text-[10px] text-slate-400 mt-1">
+              Зберігання готового Docker-образу
+            </div>
+          </div>
+
+          <div class="text-center text-slate-500 text-xs">⬇ Pull образу</div>
+
+          <!-- Step 4: K8s Deployment -->
+          <div class="node-box bg-emerald-950/30 border border-emerald-500/40 rounded-xl p-3.5">
+            <div class="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
+              <span>☸️</span> K8s Deployment / Pods
+            </div>
+            <div class="text-[10px] text-slate-300 mt-1">
+              Kubelet стягує образ із GHCR під час старту чи Rolling Update
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="mt-6 pt-3 border-t border-slate-700/80 text-[11px] text-slate-400">
+          💡 <span class="text-slate-300 font-semibold">Повна автоматизація:</span> від комміту розробника до оновлення Pod-ів у кластері без ручного збирання на сервері.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bottom: Step-by-Step Flow Explanation -->
+  <div class="max-w-6xl mx-auto mt-8 bg-slate-800/80 border border-slate-700 rounded-2xl p-6">
+    <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+      <span>🚀</span> Повний життєвий цикл HTTP-запиту
+    </h3>
+    <div class="grid grid-cols-1 md:grid-cols-6 gap-3 text-center text-xs">
+      <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700">
+        <span class="text-blue-400 font-bold block mb-1">1. Клієнт</span>
+        HTTPS запит на api.masterhub.ua/orders
+      </div>
+      <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700">
+        <span class="text-blue-400 font-bold block mb-1">2. DNS</span>
+        Резолвінг домену в IP балансувальника
+      </div>
+      <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700">
+        <span class="text-emerald-400 font-bold block mb-1">3. Ingress</span>
+        Перевірка Host/Path, проксі на Service
+      </div>
+      <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700">
+        <span class="text-emerald-400 font-bold block mb-1">4. Service</span>
+        ClusterIP round-robin між Pod-ами
+      </div>
+      <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700">
+        <span class="text-emerald-400 font-bold block mb-1">5. Pod API</span>
+        Express-контролер і бізнес-логіка замовлень
+      </div>
+      <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700">
+        <span class="text-indigo-400 font-bold block mb-1">6. PostgreSQL</span>
+        Збереження у БД через masterhub-db-svc:5432
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

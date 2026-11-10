@@ -3,3 +3,6 @@ node_modules/
 masterhub.db
 *.db
 .env
+
+observability-demo/
+.idea/

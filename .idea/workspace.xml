@@ -5,7 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ee8dcb16-69f9-4398-aae8-c4c337b367bd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/REPORT.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/k8s_architecture_diagram.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/text9laba.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/masterhub.db" beforeDir="false" afterPath="$PROJECT_DIR$/masterhub.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/better-sqlite3/build/Release/better_sqlite3.node" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/better-sqlite3/build/Release/better_sqlite3.node" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/observability-demo/data/logs/app.log" beforeDir="false" afterPath="$PROJECT_DIR$/observability-demo/data/logs/app.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +28,69 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.3392603573288675" />
+      <entry key="MS500" value="2.4310596685854002" />
+      <entry key="S2" value="6.589356814600623" />
+      <entry key="S5" value="13.569780273531222" />
+      <entry key="S10" value="18.983995120484764" />
+      <entry key="S30" value="24.454782418885635" />
+      <entry key="S60" value="26.181881497996077" />
+      <entry key="M2" value="27.246713160245804" />
+      <entry key="M5" value="29.530248313368343" />
+      <entry key="M10" value="36.75102892737554" />
+      <entry key="M15" value="44.26969244026389" />
+      <entry key="M30" value="60.09287633811573" />
+      <entry key="H1" value="74.47990371744226" />
+      <entry key="H2" value="84.4474865727711" />
+      <entry key="H4" value="90.3571385612565" />
+      <entry key="D1" value="95.83772640599611" />
+      <entry key="W1" value="96.83255192797665" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.295641421928953" />
+      <entry key="MS500" value="2.3902886849539358" />
+      <entry key="S2" value="6.501468297016393" />
+      <entry key="S5" value="13.495433352035226" />
+      <entry key="S10" value="18.933864610368964" />
+      <entry key="S30" value="24.43401661542403" />
+      <entry key="S60" value="26.170889599909867" />
+      <entry key="M2" value="27.241050785562315" />
+      <entry key="M5" value="29.52784427183138" />
+      <entry key="M10" value="36.74958024685071" />
+      <entry key="M15" value="44.26854773897787" />
+      <entry key="M30" value="60.092108689965166" />
+      <entry key="H1" value="74.47942850588346" />
+      <entry key="H2" value="84.44721682016589" />
+      <entry key="H4" value="90.35699408097206" />
+      <entry key="D1" value="95.83770083439566" />
+      <entry key="W1" value="96.83254823611647" />
+    </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4,
@@ -35,32 +107,62 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;javascript.preferred.runtime.type.id&quot;: &quot;node&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/weblab/masterhub-practical1&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.jshint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.jshint&quot;: &quot;&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.init-db # очистити й заново створити таблицю orders      # опційно, якщо хочеш почати з чистою SQLite-базою.executor&quot;: &quot;Run&quot;,
+    &quot;npm.install.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start # http://localhost:8080.executor&quot;: &quot;Run&quot;,
+    &quot;npm.test # прогнати юніт-тести.executor&quot;: &quot;Run&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Jetbrains\\WebStorm 2026.2.3\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\weblab\masterhub-practical1\docs\api" />
+      <recent name="D:\weblab\masterhub-practical1" />
       <recent name="D:\weblab\masterhub-practical1\docs" />
+      <recent name="D:\weblab\masterhub-practical1\docs\api" />
       <recent name="D:\weblab\masterhub-practical1\adr" />
     </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="init-db # очистити й заново створити таблицю orders      # опційно, якщо хочеш почати з чистою SQLite-базою" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="init-db" />
+      </scripts>
+      <arguments value="     # очистити й заново створити таблицю orders      # опційно, якщо хочеш почати з чистою SQLite-базою" />
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.init-db # очистити й заново створити таблицю orders      # опційно, якщо хочеш почати з чистою SQLite-базою" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-WS-262.10315.144" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-WS-262.10968.77" />
       </set>
     </attachedChunks>
   </component>
@@ -78,6 +180,31 @@
       <workItem from="1789547177421" duration="2517000" />
       <workItem from="1790007504797" duration="1634000" />
       <workItem from="1790009166135" duration="1270000" />
+      <workItem from="1790011180394" duration="230000" />
+      <workItem from="1790148731377" duration="3305000" />
+      <workItem from="1790155498001" duration="95000" />
+      <workItem from="1790342900567" duration="115000" />
+      <workItem from="1790346487038" duration="22000" />
+      <workItem from="1790374814490" duration="196000" />
+      <workItem from="1790756781539" duration="2423000" />
+      <workItem from="1791102997943" duration="1589000" />
+      <workItem from="1791294496122" duration="874000" />
+      <workItem from="1791356668151" duration="2017000" />
+      <workItem from="1792518311661" duration="318000" />
+      <workItem from="1793187888792" duration="799000" />
+      <workItem from="1793189494945" duration="3280000" />
+      <workItem from="1793342224750" duration="688000" />
+      <workItem from="1793801354968" duration="334000" />
+      <workItem from="1793801914329" duration="82000" />
+      <workItem from="1794131528148" duration="1138000" />
+      <workItem from="1794138140756" duration="21000" />
+      <workItem from="1794138200239" duration="3000" />
+      <workItem from="1794174051464" duration="10000" />
+      <workItem from="1794179971299" duration="537000" />
+      <workItem from="1794245277639" duration="1036000" />
+      <workItem from="1794248109605" duration="2964000" />
+      <workItem from="1794251407826" duration="112000" />
+      <workItem from="1794315362813" duration="1973000" />
     </task>
     <servers />
   </component>
